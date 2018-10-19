@@ -1,6 +1,7 @@
 import argparse, copy, functools
 from themes import *
 from stretti_lewin import *
+from class_equiv import *
 from svg import *
 
     
@@ -35,6 +36,8 @@ toplot.add_argument('-l', '--plotlist',
                     help='plot from list after arg (ie "1,2,3")')
 toplot.add_argument('-t', '--threshold', type=int,
                     help="plot if count is above specified threshold (also applies to list)")
+toplot.add_argument('-c', '--beatclass', action="store_true",
+                    help="account for beat-class equivalence across barlines")
 
 bold = parser.add_argument_group("only plotting bold columns")
 bold.add_argument('-b', '--boldonly', action="store_true",
@@ -57,6 +60,9 @@ else:
     entranceTimes = combine_themes(theme1, theme2, args.excludeduplicates)
     
 thetable = lewin_allcounts(entranceTimes)
+
+if args.beatclass:
+    thetable = bcequiv_allcounts(thetable, 216)
 
 # make HTML table, only include specific values
 
