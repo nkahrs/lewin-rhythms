@@ -29,7 +29,7 @@ def lewin_count(rhythm1, rhythm2, distanceDict = {}):
             diff = j-i
             if diff>0:
                 if diff in distanceDict.keys():
-                    distanceDict[diff].append([i,j])
+                    distanceDict[diff].append((i,j)) # was formerly [[,]], changed for consistency with below
                 else:
                     distanceDict[diff] = [(i,j)]
     return distanceDict
