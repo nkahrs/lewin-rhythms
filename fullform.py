@@ -52,9 +52,9 @@ args.sameonly = 0
 args.otheronly = 0
 args.xthemeonly = 0
 args.ythemeonly = 0
-args.plotlist = "80,156" #"80,30,110,24,156,180"
-args.threshold = 0
-args.excludeduplicates = 0
+args.plotlist = 0 #"80,156" #"80,30,110,24,156,180"
+args.threshold = 40
+args.excludeduplicates = 1
 
 
 # calculate common offsets
