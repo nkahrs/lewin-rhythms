@@ -37,7 +37,7 @@ theme1, theme2, total = formtothemes(form, theme1, theme2, 5*216)
 bars = list(map(lambda i: i * 216, range(int(total/216)+1)))
 
 # plot themes and bars
-print('<body> <svg height="500" width="'+str(total+216)+'">')
+print('<body> <svg height="5000" width="'+str(total+216)+'">')
 print("<!-- bar numbers -->")
 theme2svg(bars, 0, 0, 200, 1, 'silver')
 print("<!-- theme 2 -->")
@@ -46,59 +46,67 @@ print("<!-- theme 1 -->")
 theme2svg(theme1, 0, 100, 50, 1, 'black')
 
 
-# below is still from main_svg
+# main_svg but without controls---for now I'm going to have to create an imaginary "args" object
+args = type('', (), {})()
+args.sameonly = 0
+args.otheronly = 0
+args.xthemeonly = 0
+args.ythemeonly = 0
+args.plotlist = "80,156" #"80,30,110,24,156,180"
+args.threshold = 0
+args.excludeduplicates = 0
 
-##
-### calculate common offsets
-##distanceDict = {}
-##if args.sameonly:
-##    distanceDict = lewin_count(theme1, theme1)
-##    distanceDict = lewin_count(theme2, theme2, distanceDict)
-##elif args.otheronly:
-##    distanceDict = lewin_count(theme1, theme2)
-##    distanceDict = lewin_count(theme2, theme1, distanceDict)
-##elif args.xthemeonly:
-##    distanceDict = lewin_count(theme1, theme1)
-##elif args.ythemeonly:
-##    distanceDict = lewin_count(theme2, theme2)
-##else:
-##    entranceTimes = combine_themes(theme1, theme2, args.excludeduplicates)
-##    distanceDict = lewin_count(entranceTimes, entranceTimes)
-##    
-### extract list of keys, work accordingly
-##thekeys = list(distanceDict.keys())
-### sort by number of occurences, from most to least
-##thekeys.sort(key=(lambda i: len(distanceDict[i])))
-##thekeys.reverse()
-##
-### initialize y-starting position for alignmentbrackets
-##y_start = 200
-### conditional arguments
-##if args.plotlist:
-##    # get list of alignment durations to plot (ignore others)
-##    thelist = args.plotlist
-##    thelist = thelist.split(',')
-##    thelist = list(map(int, thelist))
-##    for i in thekeys:
-##        if i in thelist:
-##            print("<!--", len(distanceDict[i]), "x", i, "-->")
-##            drawsegments(distanceDict[i], 0, y_start, 1, 'black')
-##            y_start = y_start + 2*len(distanceDict[i]) + 2
-##elif args.threshold:
-##    for i in thekeys:
-##        if len(distanceDict[i]) < args.threshold:
-##            break
-##        else:
-##            print("<!--", len(distanceDict[i]), "x", i, "-->")
-##            drawsegments(distanceDict[i], 0, y_start, 1, 'black')
-##            y_start = y_start + 2*len(distanceDict[i]) + 2
-##else:
-##    # plot all
-##    for i in thekeys:
-##        print("<!--", len(distanceDict[i]), "x", i, "-->")
-##        drawsegments(distanceDict[i], 0, y_start, 1, 'black')
-##        y_start = y_start + 2*len(distanceDict[i]) + 2
-##
-### print("<!-- some segments -->")
-### drawsegments(segments, 0, 210, 1, 'black')
-##print("</svg> </body>")
+
+# calculate common offsets
+distanceDict = {}
+if args.sameonly:
+    distanceDict = lewin_count(theme1, theme1)
+    distanceDict = lewin_count(theme2, theme2, distanceDict)
+elif args.otheronly:
+    distanceDict = lewin_count(theme1, theme2)
+    distanceDict = lewin_count(theme2, theme1, distanceDict)
+elif args.xthemeonly:
+    distanceDict = lewin_count(theme1, theme1)
+elif args.ythemeonly:
+    distanceDict = lewin_count(theme2, theme2)
+else: # same theme or one to other
+    entranceTimes = combine_themes(theme1, theme2, args.excludeduplicates)
+    distanceDict = lewin_count(entranceTimes, entranceTimes)
+    
+# extract list of keys, work accordingly
+thekeys = list(distanceDict.keys())
+# sort by number of occurences, from most to least
+thekeys.sort(key=(lambda i: len(distanceDict[i])))
+thekeys.reverse()
+
+# initialize y-starting position for alignmentbrackets
+y_start = 200
+# conditional arguments
+if args.plotlist:
+    # get list of alignment durations to plot (ignore others)
+    thelist = args.plotlist
+    thelist = thelist.split(',')
+    thelist = list(map(int, thelist))
+    for i in thekeys:
+        if i in thelist:
+            print("<!--", len(distanceDict[i]), "x", i, "-->")
+            drawsegments(distanceDict[i], 0, y_start, 1, 'black')
+            y_start = y_start + 2*len(distanceDict[i]) + 2
+elif args.threshold:
+    for i in thekeys:
+        if len(distanceDict[i]) < args.threshold:
+            break
+        else:
+            print("<!--", len(distanceDict[i]), "x", i, "-->")
+            drawsegments(distanceDict[i], 0, y_start, 1, 'black')
+            y_start = y_start + 2*len(distanceDict[i]) + 2
+else:
+    # plot all
+    for i in thekeys:
+        print("<!--", len(distanceDict[i]), "x", i, "-->")
+        drawsegments(distanceDict[i], 0, y_start, 1, 'black')
+        y_start = y_start + 2*len(distanceDict[i]) + 2
+
+# print("<!-- some segments -->")
+# drawsegments(segments, 0, 210, 1, 'black')
+print("</svg> </body>")
