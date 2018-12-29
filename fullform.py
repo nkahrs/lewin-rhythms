@@ -49,11 +49,11 @@ theme2svg(theme1, 0, 100, 50, 1, 'black')
 # main_svg but without controls---for now I'm going to have to create an imaginary "args" object
 args = type('', (), {})()
 args.sameonly = 0
-args.otheronly = 1
+args.otheronly = 0
 args.xthemeonly = 0
 args.ythemeonly = 0
-args.plotlist = "80,156" #"80,30,110,24,156,180"
-args.threshold = 0#40
+args.plotlist = 0 #"80,30,110,24,156,180" #"80,156" 
+args.threshold = 0 #50
 args.excludeduplicates = 0
 
 
@@ -76,8 +76,8 @@ else: # same theme or one to other
 # extract list of keys, work accordingly
 thekeys = list(distanceDict.keys())
 
-# only keep IOIs with length of at most 216
-thekeys = list(filter(lambda x: x < 216, thekeys))
+# only keep IOIs with length of at most 2*216
+thekeys = list(filter(lambda x: x <= 2*216, thekeys))
 
 # sort by number of occurences, from most to least
 thekeys.sort(key=(lambda i: len(distanceDict[i])))
@@ -85,34 +85,28 @@ thekeys.reverse()
 
 # initialize y-starting position for alignmentbrackets
 y_start = 200
-# conditional arguments
+
+# determine requisite conditional "showkeyp"
 if args.plotlist:
     # get list of alignment durations to plot (ignore others)
     thelist = args.plotlist
     thelist = thelist.split(',')
     thelist = list(map(int, thelist))
-    for i in thekeys:
-        if i in thelist:
-            print("<!--", len(distanceDict[i]), "x", i, "-->")
-            distanceDict[i].sort() # new addition
-            drawsegments(distanceDict[i], 0, y_start, 1, 'black')
-            y_start = y_start + 2*len(distanceDict[i]) + 2
+    showkeyp = (lambda x: x in thelist)
 elif args.threshold:
-    for i in thekeys:
-        if len(distanceDict[i]) < args.threshold:
-            break
-        else:
-            print("<!--", len(distanceDict[i]), "x", i, "-->")
-            distanceDict[i].sort() # new addition
-            drawsegments(distanceDict[i], 0, y_start, 1, 'black')
-            y_start = y_start + 2*len(distanceDict[i]) + 2
+    showkeyp = (lambda x: len(distanceDict[x]) >= args.threshold)
 else:
-    # plot all
-    for i in thekeys:
+    showkeyp = (lambda x: 1)
+
+for i in thekeys:
+    if showkeyp(i):
         print("<!--", len(distanceDict[i]), "x", i, "-->")
         distanceDict[i].sort() # new addition
         drawsegments(distanceDict[i], 0, y_start, 1, 'black')
-        y_start = y_start + 2*len(distanceDict[i]) + 2
+        y_start = y_start + 0.5*len(distanceDict[i]) + 2 # previously 2*len, etc; shortened because there's a lot now
+
+
+# should refactor list, threshold, etc.
 
 # print("<!-- some segments -->")
 # drawsegments(segments, 0, 210, 1, 'black')
