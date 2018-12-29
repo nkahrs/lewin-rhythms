@@ -52,8 +52,8 @@ args.sameonly = 0
 args.otheronly = 0
 args.xthemeonly = 0
 args.ythemeonly = 0
-args.plotlist = 0 #"80,30,110,24,156,180" #"80,156" 
-args.threshold = 0 #50
+args.plotlist = 0 #"80,30,110,24,156,180,216,186,184,124" #"80,156" 
+args.threshold = 10 #70 #50
 args.excludeduplicates = 0
 
 
@@ -98,12 +98,29 @@ elif args.threshold:
 else:
     showkeyp = (lambda x: 1)
 
+# assign color based on Section 5 figures
+def thecolor(ioi):
+    if ioi==24:
+        return 'red'
+    elif ioi==80:
+        return 'orange'
+    elif ioi==156:
+        return 'green'
+    elif ioi==30:
+        return 'blue'
+    elif ioi==180:
+        return 'purple'
+    elif ioi==110:
+        return 'brown'
+    else:
+        return 'black'
+
 for i in thekeys:
     if showkeyp(i):
         print("<!--", len(distanceDict[i]), "x", i, "-->")
         distanceDict[i].sort() # new addition
-        drawsegments(distanceDict[i], 0, y_start, 1, 'black')
-        y_start = y_start + 0.5*len(distanceDict[i]) + 2 # previously 2*len, etc; shortened because there's a lot now
+        drawsegments(distanceDict[i], 0, y_start, 1, thecolor(i))
+        y_start += 2*len(distanceDict[i]) + 2 # previously 2*len, etc; shortened because there's a lot now
 
 
 # should refactor list, threshold, etc.
