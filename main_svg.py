@@ -113,32 +113,42 @@ thekeys.reverse()
 
 # initialize y-starting position for alignmentbrackets
 y_start = 200
-# conditional arguments
+
+# determine requisite conditional "showkeyp"
 if args.plotlist:
     # get list of alignment durations to plot (ignore others)
     thelist = args.plotlist
     thelist = thelist.split(',')
     thelist = list(map(int, thelist))
-    for i in thekeys:
-        if i in thelist:
-            print("<!--", len(distanceDict[i]), "x", i, "-->")
-            drawsegments(distanceDict[i], 0, y_start, 1, 'black')
-            y_start = y_start + 2*len(distanceDict[i]) + 2
+    showkeyp = (lambda x: x in thelist)
 elif args.threshold:
-    for i in thekeys:
-        if len(distanceDict[i]) < args.threshold:
-            break
-        else:
-            print("<!--", len(distanceDict[i]), "x", i, "-->")
-            drawsegments(distanceDict[i], 0, y_start, 1, 'black')
-            y_start = y_start + 2*len(distanceDict[i]) + 2
+    showkeyp = (lambda x: len(distanceDict[x]) >= args.threshold)
 else:
-    # plot all
-    for i in thekeys:
+    showkeyp = (lambda x: 1)
+
+# assign color based on Section 5 figures (should add flag to disable)
+def thecolor(ioi):
+    if ioi==24:
+        return 'red'
+    elif ioi==80:
+        return 'orange'
+    elif ioi==156:
+        return 'green'
+    elif ioi==30:
+        return 'blue'
+    elif ioi==180:
+        return 'purple'
+    elif ioi==110:
+        return 'brown'
+    else:
+        return 'black'
+
+for i in thekeys:
+    if showkeyp(i):
         print("<!--", len(distanceDict[i]), "x", i, "-->")
-        drawsegments(distanceDict[i], 0, y_start, 1, 'black')
-        y_start = y_start + 2*len(distanceDict[i]) + 2
+        distanceDict[i].sort() # new addition
+        drawsegments(distanceDict[i], 0, y_start, 1, thecolor(i))
+        y_start += 2*len(distanceDict[i]) + 2 # previously 2*len, etc; shortened because there's a lot now
 
 # print("<!-- some segments -->")
-# drawsegments(segments, 0, 210, 1, 'black')
 print("</svg> </body>")

@@ -49,11 +49,11 @@ theme2svg(theme1, 0, 100, 50, 1, 'black')
 # main_svg but without controls---for now I'm going to have to create an imaginary "args" object
 args = type('', (), {})()
 args.sameonly = 0
-args.otheronly = 0
+args.otheronly = 1
 args.xthemeonly = 0
 args.ythemeonly = 0
-args.plotlist = 0 #"80,30,110,24,156,180,216,186,184,124" #"80,156" 
-args.threshold = 10 #70 #50
+args.plotlist = "80,30,110,24,156,180,216,186,184,124" #"80,156" 
+args.threshold = 0 #70 #50
 args.excludeduplicates = 0
 
 
