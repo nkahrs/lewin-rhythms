@@ -49,10 +49,10 @@ theme2svg(theme1, 0, 100, 50, 1, 'black')
 # main_svg but without controls---for now I'm going to have to create an imaginary "args" object
 args = type('', (), {})()
 args.sameonly = 0
-args.otheronly = 1
+args.otheronly = 0
 args.xthemeonly = 0
 args.ythemeonly = 0
-args.plotlist = "80,30,110,24,156,180,216,186,184,124" #"80,156" 
+args.plotlist = "186,124,80,110,156,180,192,168,128,24,30" #"80,30,110,24,156,180,216,186,184,124" #"80,156" 
 args.threshold = 0 #70 #50
 args.excludeduplicates = 0
 
@@ -119,11 +119,13 @@ for i in thekeys:
     if showkeyp(i):
         print("<!--", len(distanceDict[i]), "x", i, "-->")
         distanceDict[i].sort() # new addition
+        # add prefatory text: another new addition
+        print('<text x="' + str(distanceDict[i][0][0] - 20) + '" y="'
+              + str(y_start - 5) + '" size="16"> '
+              + str(len(distanceDict[i])) + ' x ' + str(i) + ' </text>')
         drawsegments(distanceDict[i], 0, y_start, 1, thecolor(i))
-        y_start += 2*len(distanceDict[i]) + 2 # previously 2*len, etc; shortened because there's a lot now
+        y_start += len(distanceDict[i]) + 2 # previously 2*len, etc; shortened because there's a lot now
 
-
-# should refactor list, threshold, etc.
 
 # print("<!-- some segments -->")
 # drawsegments(segments, 0, 210, 1, 'black')
