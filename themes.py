@@ -68,4 +68,4 @@ theme2 = list(map(lambda i: (int(i)*4)+40, theme2))
 
 
 # some bar endpoints
-bars = list(map(lambda i: i * 216, range(7)))
+bars = list(map(lambda i: i * 216, range(11)))

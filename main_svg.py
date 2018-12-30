@@ -41,6 +41,12 @@ toplot.add_argument('-l', '--plotlist',
 toplot.add_argument('-t', '--threshold', type=int,
                     help="plot if count is above specified threshold")
 
+finalformat = parser.add_argument_group()
+finalformat.add_argument('-c', '--colors', action="store_true",
+                         help="plot with precoded coloring")
+finalformat.add_argument('-p', '--print', action="store_true",
+                         help="add individual counts as textboxes")
+
 args = parser.parse_args()
 
 # tests that argument parsing works correctly, can/should be commented out
@@ -78,7 +84,7 @@ elif args.ythemeoffset:
     theme2 = shift_theme(theme2, args.ythemeoffset)
 
 # plot themes and bars
-print('<body> <svg height="4000" width="2000">')
+print('<body> <svg height="4000" width="3000">')
 print("<!-- bar numbers -->")
 theme2svg(bars, 0, 0, 200, 1, 'silver')
 if (not args.xthemeonly):
@@ -127,26 +133,34 @@ else:
     showkeyp = (lambda x: 1)
 
 # assign color based on Section 5 figures (should add flag to disable)
-def thecolor(ioi):
-    if ioi==24:
-        return 'red'
-    elif ioi==80:
-        return 'orange'
-    elif ioi==156:
-        return 'green'
-    elif ioi==30:
-        return 'blue'
-    elif ioi==180:
-        return 'purple'
-    elif ioi==110:
-        return 'brown'
-    else:
-        return 'black'
+if args.colors:
+    def thecolor(ioi):
+        if ioi==24:
+            return 'red'
+        elif ioi==80:
+            return 'orange'
+        elif ioi==156:
+            return 'green'
+        elif ioi==30:
+            return 'blue'
+        elif ioi==180:
+            return 'purple'
+        elif ioi==110:
+            return 'brown'
+        else:
+            return 'black'
+else:
+    thecolor = lambda x: 'black'
 
 for i in thekeys:
     if showkeyp(i):
         print("<!--", len(distanceDict[i]), "x", i, "-->")
         distanceDict[i].sort() # new addition
+        # draw prefatory text if asked
+        if args.print:
+            print('<text x="' + str(distanceDict[i][0][0] - 20) + '" y="'
+              + str(y_start - 5) + '" fill = "' + thecolor(i) + '"> '
+              + str(len(distanceDict[i])) + ' x ' + str(i) + ' </text>')
         drawsegments(distanceDict[i], 0, y_start, 1, thecolor(i))
         y_start += 2*len(distanceDict[i]) + 2 # previously 2*len, etc; shortened because there's a lot now
 
