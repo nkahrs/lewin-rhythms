@@ -71,6 +71,51 @@ var theme2 = container.selectAll(".theme1")
 // can I plot even a very simple set of durations?
 // of course I haven't yet implemented generating those durations
 
+// var distanceDict = {216: [[1,2]]};
+var distanceDict = [[[32, 248], [40, 256], [248, 464], [256, 472], [372, 588], [384, 600], [464, 680], [472, 688], [528, 744], [552, 768], [588, 804], [600, 816], [648, 864], [648, 864], [648, 864], [648, 864], [680, 896], [688, 904], [712, 928], [728, 944], [728, 944], [744, 960], [768, 984], [774, 990], [792, 1008], [804, 1020], [804, 1020], [816, 1032], [834, 1050], [840, 1056]]];
+
+var distanceList = [[0, 216, 32, 248], [1, 216, 40, 256], [2, 216, 248, 464], [3, 216, 256, 472], [4, 216, 372, 588], [5, 216, 384, 600], [6, 216, 464, 680], [7, 216, 472, 688], [8, 216, 528, 744], [9, 216, 552, 768], [10, 216, 588, 804], [11, 216, 600, 816], [12, 216, 648, 864], [13, 216, 648, 864], [14, 216, 648, 864], [15, 216, 648, 864], [16, 216, 680, 896], [17, 216, 688, 904], [18, 216, 712, 928], [19, 216, 728, 944], [20, 216, 728, 944], [21, 216, 744, 960], [22, 216, 768, 984], [23, 216, 774, 990], [24, 216, 792, 1008], [25, 216, 804, 1020], [26, 216, 804, 1020], [27, 216, 816, 1032], [28, 216, 834, 1050], [29, 216, 840, 1056], [0, 60, 528, 588], [1, 60, 588, 648], [2, 60, 588, 648], [3, 60, 744, 804], [4, 60, 774, 834], [5, 60, 804, 864], [6, 60, 804, 864], [7, 60, 864, 924], [8, 60, 864, 924], [9, 60, 884, 944], [10, 60, 884, 944], [11, 60, 904, 964], [12, 60, 924, 984], [13, 60, 960, 1020], [14, 60, 960, 1020], [15, 60, 975, 1035], [16, 60, 984, 1044], [17, 60, 990, 1050], [18, 60, 996, 1056]];
+
+
+var colors = {216: "orange"}
+
+var segments = container.selectAll(".seg")
+    .data(distanceList)
+    .enter();
+
+segments.append("rect")
+    .attr("x", function(d) {return d[2];})
+    .attr("y", function(d) {return 300 + d[0]*10;})
+    .attr("height", 5)
+    .attr("fill", function(d) {return colors[d[1]];})
+    .attr("width", function(d) {console.log(d); return d[3] - d[2] + 1;});
+
+segments.append("rect")
+    .attr("x", function(d) {return d[2];})
+    .attr("y", function(d) {return 295 + d[0]*10;})
+    .attr("height", 5)
+    .attr("fill", function(d) {return colors[d[1]];})
+    .attr("width", 1);
+
+segments.append("rect")
+    .attr("x", function(d) {return d[3];})
+    .attr("y", function(d) {return 295 + d[0]*10;})
+    .attr("height", 5)
+    .attr("fill", function(d) {return colors[d[1]];})
+    .attr("width", 1);
+
+
+
+// var single = container.append("g")
+//     .attr("transform", "translate(0," + 150 + ")"
+// 	  );
+
+// single.append("rect")
+//     .attr("x", 0).attr("y", 0)
+//     .attr("height", 1).attr("width", 216)
+//     .attr("fill", "orange");
+
+
 
 
 </script>
