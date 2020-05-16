@@ -34,21 +34,6 @@ var container = svg.append("g")
 	  );
 
 
-// maybe let's try to just display barlines first
-
-// python code for reference
-// # plot themes and bars
-// print('<body> <svg height="4000" width="3000">')
-// print("<!-- bar numbers -->")
-// theme2svg(bars, 0, 0, 200, 1, 'silver')
-// if (not args.xthemeonly):
-//     print("<!-- theme 2 -->")
-//     theme2svg(theme2, 0, 50, 50, 1, 'black')
-// if (not args.ythemeonly):
-//     print("<!-- theme 1 -->")
-//     theme2svg(theme1, 0, 100, 50, 1, 'black')
-
-
 // bars
 
 var bars_data = Array.from({length: 11}, (x, i) => i*216);
@@ -56,10 +41,8 @@ var bars_data = Array.from({length: 11}, (x, i) => i*216);
 var bars = container.selectAll(".bars")
     .data(bars_data)
     .enter().append("rect")
-    .attr("height", 200)
-    .attr("width", 1)
-    .attr("x", function (d) {return d;})
-    .attr("fill", "silver");
+    .attr("height", 200).attr("width", 1).attr("fill", "silver")
+    .attr("x", function (d) {return d;});
 
 
 // theme 1
@@ -68,24 +51,20 @@ var theme1_data = [32, 248, 372, 464, 528, 588, 648, 680, 712, 744, 774, 804, 83
 var theme1 = container.selectAll(".theme1")
     .data(theme1_data)
     .enter().append("rect")
-    .attr("height", 50)
-    .attr("width", 1)
-    .attr("x", function (d) {return d;})
-    .attr("fill", "black")
-    .attr("y", 50);
+    .attr("height", 50).attr("width", 1)
+    .attr("fill", "black").attr("y", 50)
+    .attr("x", function (d) {return d;});
 
 
 // theme 2
 var theme2_data = [40, 256, 384, 472, 552, 600, 648, 688, 728, 768, 792, 816, 840, 864, 884, 904, 924, 944, 964, 984, 996, 1008, 1020, 1032, 1044, 1056];
 
-var theme2 = container.selectAll(".theme2")
+var theme2 = container.selectAll(".theme1")
     .data(theme2_data)
     .enter().append("rect")
-    .attr("height", 50)
-    .attr("width", 1)
-    .attr("x", function (d) {return d;})
-    .attr("fill", "black")
-    .attr("y", 100);
+    .attr("height", 50).attr("width", 1)
+    .attr("fill", "black").attr("y", 100)
+    .attr("x", function (d) {return d;});
 
 
 
