@@ -84,36 +84,26 @@ var segments = container.selectAll(".seg")
     .enter();
 
 segments.append("rect")
-    .attr("x", function(d) {return d[2];})
-    .attr("y", function(d) {return 300 + d[0]*10;})
+    .attr("x", d => d[2])
+    .attr("y", d => 300 + d[0]*10)
     .attr("height", 5)
-    .attr("fill", function(d) {return colors[d[1]];})
-    .attr("width", function(d) {console.log(d); return d[3] - d[2] + 1;});
+    .attr("fill", d => colors[d[1]])
+    .attr("width", d => d[3] - d[2] + 1);
 
 segments.append("rect")
-    .attr("x", function(d) {return d[2];})
-    .attr("y", function(d) {return 295 + d[0]*10;})
+    .attr("x", d => d[2])
+    .attr("y", d => 295 + d[0]*10)
     .attr("height", 5)
-    .attr("fill", function(d) {return colors[d[1]];})
+    .attr("fill", d => colors[d[1]])
     .attr("width", 1);
 
 segments.append("rect")
-    .attr("x", function(d) {return d[3];})
-    .attr("y", function(d) {return 295 + d[0]*10;})
+    .attr("x", d => d[3])
+    .attr("y", d => 295 + d[0]*10)
     .attr("height", 5)
-    .attr("fill", function(d) {return colors[d[1]];})
+    .attr("fill", d => colors[d[1]])
     .attr("width", 1);
 
-
-
-// var single = container.append("g")
-//     .attr("transform", "translate(0," + 150 + ")"
-// 	  );
-
-// single.append("rect")
-//     .attr("x", 0).attr("y", 0)
-//     .attr("height", 1).attr("width", 216)
-//     .attr("fill", "orange");
 
 
 
