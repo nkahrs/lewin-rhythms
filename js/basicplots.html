@@ -13,7 +13,9 @@ text {
 
 </style>
 <svg id="thevis" width="4000" height="3000"></svg> <!-- do not change this line -->
-<script src="d3.v4.js"></script> <!-- change to d3.v3.js if you want -->
+<!--<script src="d3.v4.js"></script>--> <!-- change to d3.v3.js if you want -->
+     <script src="https://d3js.org/d3.v5.min.js"></script>
+
 <script src="student.js"></script> <!-- do not change this line -->
 <script>
 
@@ -65,6 +67,9 @@ var theme2 = container.selectAll(".theme1")
     .attr("height", 50).attr("width", 1)
     .attr("fill", "black").attr("y", 100)
     .attr("x", function (d) {return d;});
+
+// can I plot even a very simple set of durations?
+// of course I haven't yet implemented generating those durations
 
 
 
