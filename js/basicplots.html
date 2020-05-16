@@ -36,6 +36,11 @@ var container = svg.append("g")
 	  );
 
 
+// parameters to refer to later
+var heights = {
+    bars: 75, themes: 30, segs: 2, ends: 4
+};
+
 // bars
 
 var bars_data = Array.from({length: 11}, (x, i) => i*216);
@@ -43,7 +48,7 @@ var bars_data = Array.from({length: 11}, (x, i) => i*216);
 var bars = container.selectAll(".bars")
     .data(bars_data)
     .enter().append("rect")
-    .attr("height", 200).attr("width", 1).attr("fill", "silver")
+    .attr("height", heights.bars).attr("width", 1).attr("fill", "silver")
     .attr("x", function (d) {return d;});
 
 
@@ -53,8 +58,8 @@ var theme1_data = [32, 248, 372, 464, 528, 588, 648, 680, 712, 744, 774, 804, 83
 var theme1 = container.selectAll(".theme1")
     .data(theme1_data)
     .enter().append("rect")
-    .attr("height", 50).attr("width", 1)
-    .attr("fill", "black").attr("y", 50)
+    .attr("height", heights.themes).attr("width", 1)
+    .attr("fill", "black").attr("y", (heights.bars/2 - heights.themes))
     .attr("x", function (d) {return d;});
 
 
@@ -64,8 +69,8 @@ var theme2_data = [40, 256, 384, 472, 552, 600, 648, 688, 728, 768, 792, 816, 84
 var theme2 = container.selectAll(".theme1")
     .data(theme2_data)
     .enter().append("rect")
-    .attr("height", 50).attr("width", 1)
-    .attr("fill", "black").attr("y", 100)
+    .attr("height", heights.themes).attr("width", 1)
+    .attr("fill", "black").attr("y", heights.bars/2)
     .attr("x", function (d) {return d;});
 
 // can I plot even a very simple set of durations?
@@ -77,32 +82,41 @@ var distanceDict = [[[32, 248], [40, 256], [248, 464], [256, 472], [372, 588], [
 var distanceList = [[0, 216, 32, 248], [1, 216, 40, 256], [2, 216, 248, 464], [3, 216, 256, 472], [4, 216, 372, 588], [5, 216, 384, 600], [6, 216, 464, 680], [7, 216, 472, 688], [8, 216, 528, 744], [9, 216, 552, 768], [10, 216, 588, 804], [11, 216, 600, 816], [12, 216, 648, 864], [13, 216, 648, 864], [14, 216, 648, 864], [15, 216, 648, 864], [16, 216, 680, 896], [17, 216, 688, 904], [18, 216, 712, 928], [19, 216, 728, 944], [20, 216, 728, 944], [21, 216, 744, 960], [22, 216, 768, 984], [23, 216, 774, 990], [24, 216, 792, 1008], [25, 216, 804, 1020], [26, 216, 804, 1020], [27, 216, 816, 1032], [28, 216, 834, 1050], [29, 216, 840, 1056], [0, 60, 528, 588], [1, 60, 588, 648], [2, 60, 588, 648], [3, 60, 744, 804], [4, 60, 774, 834], [5, 60, 804, 864], [6, 60, 804, 864], [7, 60, 864, 924], [8, 60, 864, 924], [9, 60, 884, 944], [10, 60, 884, 944], [11, 60, 904, 964], [12, 60, 924, 984], [13, 60, 960, 1020], [14, 60, 960, 1020], [15, 60, 975, 1035], [16, 60, 984, 1044], [17, 60, 990, 1050], [18, 60, 996, 1056]];
 
 
-var colors = {216: "orange"}
+var colors = {216: "orange", 60: "red"}
 
+// plot all segments: first connect data
+    
 var segments = container.selectAll(".seg")
     .data(distanceList)
     .enter();
 
+// main part of segments
 segments.append("rect")
     .attr("x", d => d[2])
-    .attr("y", d => 300 + d[0]*10)
-    .attr("height", 5)
-    .attr("fill", d => colors[d[1]])
+    .attr("y", (d,i) => heights.bars + heights.ends
+	  + i*(heights.segs+heights.ends))
+    .attr("height", heights.segs)
+    .attr("fill", d => colors[d[3] - d[2]])
     .attr("width", d => d[3] - d[2] + 1);
 
+// endpoints (brackets pointing up)
 segments.append("rect")
     .attr("x", d => d[2])
-    .attr("y", d => 295 + d[0]*10)
-    .attr("height", 5)
-    .attr("fill", d => colors[d[1]])
+    .attr("y", (d,i) => heights.bars + i*(heights.segs+heights.ends))
+    .attr("height", heights.ends)
+    .attr("fill", d => colors[d[3] - d[2]])
     .attr("width", 1);
 
 segments.append("rect")
     .attr("x", d => d[3])
-    .attr("y", d => 295 + d[0]*10)
-    .attr("height", 5)
-    .attr("fill", d => colors[d[1]])
+    .attr("y", (d,i) => heights.bars + i*(heights.segs+heights.ends))
+    .attr("height", heights.ends)
+    .attr("fill", d => colors[d[3] - d[2]])
     .attr("width", 1);
+
+// I should figure out a better "y" calculator
+// I can get rid of a lot of data from the data dict
+// at least the first one is redundant. d[3]-d[2] calculations might be bad
 
 
 
