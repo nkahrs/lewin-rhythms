@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+
+<!-- Adapted from basicplots.html, an attempt to have everything
+move around if one of the themes is shifted over-->
+    
+<style>
+/* all element styling should go here */
+
+
+text {
+    font-size: 12px;
+    font-family: sans-serif;
+  }
+
+</style>
+<svg id="thevis" width="4000" height="500"></svg>
+
+<form align="left">
+  <input type="radio" name="themeshift" value="0" /> 0 <br />
+  <input type="radio" name="themeshift" value="216" /> 216 <br />
+  <input type="radio" name="themeshift" value="432" /> 432 <br />
+  <input type="radio" name="themeshift" value="648" /> 648 <br />
+
+</form>
+
+     <script src="https://d3js.org/d3.v5.min.js"></script>
+
+     <script src="stretti_lewin.js"></script> <!-- do not change this line -->
+<script>
+
+// initial setup building document
+    
+var svg = d3.select("svg");
+var margin = {top: 40, right: 40, bottom: 130, left: 40};
+var width = +svg.attr("width") - margin.left - margin.right;
+var height = +svg.attr("height") - margin.top - margin.bottom;
+
+
+var container = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")"
+	  );
+
+
+// parameters to refer to later
+var heights = {
+    bars: 100, themes: 50, segs: 1, ends: 1
+};
+
+// build bars and themes, with data from stretti_lewin.js
+
+// shift theme2
+var shifted_theme2_data = shift_theme(theme2_data, 216);
+
+
+var bars = container.selectAll(".bars")
+    .data(bars_data)
+    .enter().append("rect")
+    .attr("height", heights.bars).attr("width", 1).attr("fill", "silver")
+    .attr("x", function (d) {return d;});
+
+var theme1 = container.selectAll(".theme1")
+    .data(theme1_data)
+    .enter().append("rect")
+    .attr("height", heights.themes).attr("width", 1)
+    .attr("fill", "black").attr("y", (heights.bars/2 - heights.themes))
+    .attr("x", function (d) {return d;});
+
+
+// can I plot even a very simple set of durations?
+
+var both_data = combine_themes(theme1_data, shifted_theme2_data);
+
+var distanceList = distanceDictToDistanceList(lewin_count(both_data, both_data));
+
+
+var colors = {216: "orange", 60: "red"}
+
+// plot all segments: first connect data
+
+
+// main part of segments first
+var segments = container.selectAll(".seg")
+    .data(distanceList)
+    .enter().append("rect")
+    .attr("x", d => d[2])
+    .attr("y", (d,i) => heights.bars + heights.ends
+	  + i*(heights.segs+heights.ends))
+    .attr("height", heights.segs)
+    .attr("fill", d => colors[d[3] - d[2]])
+    .attr("width", d => d[3] - d[2] + 1);
+
+// and endpoints
+var lfEnds = container.selectAll(".lfEnd")
+    .data(distanceList)
+    .enter().append("rect")
+    .attr("x", d => d[2])
+    .attr("y", (d,i) => heights.bars + i*(heights.segs+heights.ends))
+    .attr("height", heights.ends)
+    .attr("fill", d => colors[d[3] - d[2]])
+    .attr("width", 1);
+
+var rtEnds = container.selectAll(".rtEnd")
+    .data(distanceList)
+    .enter().append("rect")
+    .attr("x", d => d[3])
+    .attr("y", (d,i) => heights.bars + i*(heights.segs+heights.ends))
+    .attr("height", heights.ends)
+    .attr("fill", d => colors[d[3] - d[2]])
+    .attr("width", 1);
+
+
+
+// end stuff copy-pasted from basicplots.html (should factor some out)
+
+// begin transitions
+
+// copy-pasted from GLK project 2
+/* function to learn which radio button was selected;
+   thanks http://stackoverflow.com/a/9618826 */
+function whichRadio(name) {
+    var radios = document.getElementsByName(name);
+    for (var i = 0, length = radios.length; i < length; i++) {
+        if (radios[i].checked) {
+            return radios[i].value;
+        }
+    }
+    return undefined;
+}
+d3.selectAll("input").on("click", function() {
+    updateEtc(whichRadio("themeshift"));
+});
+
+
+var theme2 = container.selectAll(".theme2")
+    .data(shifted_theme2_data)
+    .enter().append("rect")
+    .attr("height", heights.themes).attr("width", 1)
+    .attr("fill", "black").attr("y", heights.bars/2)
+    .attr("x", function (d) {return d;});
+
+
+var transDur = 500;
+
+// shift the plot of theme 2
+function updateEtc(themeshift) {
+
+    console.log(themeshift);
+    
+    shifted_theme2_data = shift_theme(theme2_data, (+themeshift));
+
+    theme2.data(shifted_theme2_data)
+	.transition().duration(transDur)
+	.attr("x", function (d) {return d;});
+
+    // recalculate all the IOIs
+    // it'd be so much more efficient to not have copy-pasted this;
+    // I should just have empty themes that are created by button presses
+    
+    both_data = combine_themes(theme1_data, shifted_theme2_data);
+
+    distanceList = distanceDictToDistanceList(lewin_count(both_data, both_data));
+
+
+// plot all segments: first connect data
+    
+    segments.data(distanceList)
+    	.transition().duration(transDur)
+    	.attr("x", d => d[2])
+	.attr("fill", d => colors[d[3] - d[2]])
+	.attr("width", d => d[3] - d[2] + 1);
+
+    lfEnds.data(distanceList)
+        .transition().duration(transDur)
+    	.attr("x", d => d[2])
+        .attr("fill", d => colors[d[3] - d[2]]);
+
+    rtEnds.data(distanceList)
+        .transition().duration(transDur)
+    	.attr("x", d => d[3])
+        .attr("fill", d => colors[d[3] - d[2]]);
+
+    
+    
+}
+
+
+</script>
