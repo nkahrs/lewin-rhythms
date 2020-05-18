@@ -68,12 +68,13 @@ var theme1 = container.selectAll(".theme1")
 
 // can I plot even a very simple set of durations?
 
-var both_data = combine_themes(theme1_data, shifted_theme2_data);
+// var both_data = combine_themes(theme1_data, shifted_theme2_data);
 
-var distanceList = distanceDictToDistanceList(lewin_count(both_data, both_data));
+var distanceList = lewinCount(theme1_data, shifted_theme2_data); //distanceDictToDistanceList(lewin_count(both_data, both_data));
 
 
-var colors = {216: "orange", 60: "red"}
+var colors = {216: "silver", 24: "red", 80: "orange", 156: "green",
+	      30: "blue", 180: "purple", 110: "brown"};
 
 // plot all segments: first connect data
 
@@ -83,10 +84,10 @@ var segments = container.selectAll(".seg")
     .data(distanceList)
     .enter().append("rect")
     .attr("x", d => d[2])
-    .attr("y", (d,i) => heights.bars + heights.ends
-	  + i*(heights.segs+heights.ends))
+    .attr("y", d => heights.bars + heights.ends
+	  + d[0]*(heights.segs+heights.ends))
     .attr("height", heights.segs)
-    .attr("fill", d => colors[d[3] - d[2]])
+    .attr("fill", d => nc(colors[d[3] - d[2]]))
     .attr("width", d => d[3] - d[2] + 1);
 
 // and endpoints
@@ -94,18 +95,18 @@ var lfEnds = container.selectAll(".lfEnd")
     .data(distanceList)
     .enter().append("rect")
     .attr("x", d => d[2])
-    .attr("y", (d,i) => heights.bars + i*(heights.segs+heights.ends))
+    .attr("y", d => heights.bars + d[0]*(heights.segs+heights.ends))
     .attr("height", heights.ends)
-    .attr("fill", d => colors[d[3] - d[2]])
+    .attr("fill", d => nc(colors[d[3] - d[2]]))
     .attr("width", 1);
 
 var rtEnds = container.selectAll(".rtEnd")
     .data(distanceList)
     .enter().append("rect")
     .attr("x", d => d[3])
-    .attr("y", (d,i) => heights.bars + i*(heights.segs+heights.ends))
+    .attr("y", d => heights.bars + d[0]*(heights.segs+heights.ends))
     .attr("height", heights.ends)
-    .attr("fill", d => colors[d[3] - d[2]])
+    .attr("fill", d => nc(colors[d[3] - d[2]]))
     .attr("width", 1);
 
 
@@ -141,10 +142,8 @@ var theme2 = container.selectAll(".theme2")
 
 var transDur = 500;
 
-// shift the plot of theme 2
+// shift the plot of theme 2 and of segments
 function updateEtc(themeshift) {
-
-    console.log(themeshift);
     
     shifted_theme2_data = shift_theme(theme2_data, (+themeshift));
 
@@ -156,31 +155,45 @@ function updateEtc(themeshift) {
     // it'd be so much more efficient to not have copy-pasted this;
     // I should just have empty themes that are created by button presses
     
-    both_data = combine_themes(theme1_data, shifted_theme2_data);
+//    both_data = combine_themes(theme1_data, shifted_theme2_data);
 
-    distanceList = distanceDictToDistanceList(lewin_count(both_data, both_data));
+    distanceList = lewinCount(theme1_data, shifted_theme2_data); //distanceDictToDistanceList(lewin_count(both_data, both_data));
 
 
-// plot all segments: first connect data
+// adjust segment plots
     
     segments.data(distanceList)
     	.transition().duration(transDur)
     	.attr("x", d => d[2])
-	.attr("fill", d => colors[d[3] - d[2]])
+        .attr("y", d => heights.bars + heights.ends
+	  + d[0]*(heights.segs+heights.ends))
+	.attr("fill", d => nc(colors[d[3] - d[2]]))
 	.attr("width", d => d[3] - d[2] + 1);
 
     lfEnds.data(distanceList)
         .transition().duration(transDur)
     	.attr("x", d => d[2])
-        .attr("fill", d => colors[d[3] - d[2]]);
+        .attr("y", d => heights.bars + d[0]*(heights.segs+heights.ends))
+        .attr("fill", d => nc(colors[d[3] - d[2]]));
 
     rtEnds.data(distanceList)
         .transition().duration(transDur)
     	.attr("x", d => d[3])
-        .attr("fill", d => colors[d[3] - d[2]]);
+        .attr("y", d => heights.bars + d[0]*(heights.segs+heights.ends))
+        .attr("fill", d => nc(colors[d[3] - d[2]]));
 
+    // current (5/17, 10pm) issue: some segments get stuck?
     
     
+}
+
+// normalize color
+function nc(color) {
+    if (color) {
+	return color;
+    } else {
+	return "black";
+    }
 }
 
 
