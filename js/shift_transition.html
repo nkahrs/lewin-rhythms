@@ -16,10 +16,12 @@ text {
 <svg id="thevis" width="4000" height="500"></svg>
 
 <form align="left">
-  <input type="radio" name="themeshift" value="0" /> 0 <br />
-  <input type="radio" name="themeshift" value="216" /> 216 <br />
-  <input type="radio" name="themeshift" value="432" /> 432 <br />
-  <input type="radio" name="themeshift" value="648" /> 648 <br />
+    <input type="radio" name="themeshift" value="start" /> start <br />
+    <input type="radio" name="themeshift" value="B" /> <b>B</b> <br />
+    <input type="radio" name="themeshift" value="D" /> <b>D</b> <br />
+    <input type="radio" name="themeshift" value="E" /> <b>E</b> <br />
+    <input type="radio" name="themeshift" value="F" /> <b>F</b> <br />
+    <input type="radio" name="themeshift" value="H" /> <b>H</b> <br />
 
 </form>
 
@@ -62,7 +64,7 @@ var theme1 = container.selectAll(".theme1")
     .data(theme1_data)
     .enter().append("rect")
     .attr("height", heights.themes).attr("width", 1)
-    .attr("fill", "black").attr("y", (heights.bars/2 - heights.themes))
+    .attr("fill", "black").attr("y", heights.bars/2)
     .attr("x", function (d) {return d;});
 
 
@@ -74,7 +76,7 @@ var distanceList = lewinCount(theme1_data, shifted_theme2_data); //distanceDictT
 
 
 var colors = {216: "silver", 24: "red", 80: "orange", 156: "green",
-	      30: "blue", 180: "purple", 110: "brown"};
+	      30: "blue", 180: "purple", 110: "brown", 0: "none"};
 
 // plot all segments: first connect data
 
@@ -136,28 +138,43 @@ var theme2 = container.selectAll(".theme2")
     .data(shifted_theme2_data)
     .enter().append("rect")
     .attr("height", heights.themes).attr("width", 1)
-    .attr("fill", "black").attr("y", heights.bars/2)
+    .attr("fill", "black").attr("y", (heights.bars/2 - heights.themes))
     .attr("x", function (d) {return d;});
 
 
-var transDur = 500;
+var transDur = 900;
+
+// how much to shift each theme by depending on where we are
+var shifts = {"start": [0, 1080],
+	      "B": [0, 648],
+	      "D": [0, 216],
+	      "E": [216, 0],
+	      "F": [648, 0],
+	      "H": [1080, 0]}
 
 // shift the plot of theme 2 and of segments
 function updateEtc(themeshift) {
-    
-    shifted_theme2_data = shift_theme(theme2_data, (+themeshift));
+
+    shifted_theme2_data = shift_theme(theme2_data, shifts[themeshift][1]);
 
     theme2.data(shifted_theme2_data)
 	.transition().duration(transDur)
 	.attr("x", function (d) {return d;});
 
+    shifted_theme1_data = shift_theme(theme1_data, shifts[themeshift][0]);
+
+    theme1.data(shifted_theme1_data)
+	.transition().duration(transDur)
+	.attr("x", function (d) {return d;});
+
+    
     // recalculate all the IOIs
     // it'd be so much more efficient to not have copy-pasted this;
     // I should just have empty themes that are created by button presses
     
 //    both_data = combine_themes(theme1_data, shifted_theme2_data);
 
-    distanceList = lewinCount(theme1_data, shifted_theme2_data); //distanceDictToDistanceList(lewin_count(both_data, both_data));
+    distanceList = lewinCount(shifted_theme1_data, shifted_theme2_data); //distanceDictToDistanceList(lewin_count(both_data, both_data));
 
 
 // adjust segment plots
@@ -166,8 +183,8 @@ function updateEtc(themeshift) {
     	.transition().duration(transDur)
     	.attr("x", d => d[2])
         .attr("y", d => heights.bars + heights.ends
-	  + d[0]*(heights.segs+heights.ends))
-	.attr("fill", d => nc(colors[d[3] - d[2]]))
+	      + d[0]*(heights.segs+heights.ends))
+        .attr("fill", d => nc(colors[d[3] - d[2]]))
 	.attr("width", d => d[3] - d[2] + 1);
 
     lfEnds.data(distanceList)
@@ -183,6 +200,7 @@ function updateEtc(themeshift) {
         .attr("fill", d => nc(colors[d[3] - d[2]]));
 
     // current (5/17, 10pm) issue: some segments get stuck?
+    // play around with exit-remove etc
     
     
 }
